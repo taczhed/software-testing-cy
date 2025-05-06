@@ -1,0 +1,28 @@
+{
+  "navigation": [
+    {
+      "title": "Home"
+    },
+    {
+      "title": "Products"
+    },
+    {
+      "title": "Cart"
+    },
+    {
+      "title": "Signup / Login"
+    },
+    {
+      "title": "Test Cases"
+    },
+    {
+      "title": "API Testing"
+    },
+    {
+      "title": "Video Tutorials"
+    },
+    {
+      "title": "Contact us"
+    }
+  ]
+}

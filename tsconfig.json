@@ -5,6 +5,7 @@
 	"types": ["cypress"],
 	"module": "commonjs",
 	"esModuleInterop": true,
+	"resolveJsonModule": true,
 	"skipLibCheck": true,
 	"strict": true
   },
