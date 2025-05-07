@@ -1,0 +1,16 @@
+{
+  "name": "JohnPork",
+  "email": "johnpork@test.com",
+  "password": "Test123!",
+  "birthDay": "1",
+  "birthMonth": "January",
+  "birthYear": "2002",
+  "firstName": "John",
+  "lastName": "Pork",
+  "address": "21 Jump St.",
+  "country": "United States",
+  "state": "Test State",
+  "city": "Test City",
+  "zipcode": "12345",
+  "mobile": "1234567890"
+}
