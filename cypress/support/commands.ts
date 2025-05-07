@@ -1,20 +1,54 @@
-import { loginPage } from '../selectors/login-selectors';
 import { ILoginAccount } from '../interfaces/account.interface';
+
+import user from '../fixtures/user.json';
 
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(parameters: ILoginAccount): Chainable<JQuery<HTMLElement>>;
+      createAccount(): Chainable<JQuery<HTMLElement>>;
+      deleteAccount(user: ILoginAccount): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
 
-Cypress.Commands.add('login', (parameters: ILoginAccount) => {
-  cy.intercept('GET', 'https://ep1.adtrafficquality.google/getconfig/sodar?**').as('loadPage');
+Cypress.Commands.add('createAccount', () => {
+  cy.request({
+    method: 'POST',
+    url: '/api/createAccount',
+    form: true,
+    body: {
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      birth_date: user.birthDay,
+      birth_month: user.birthMonth,
+      birth_year: user.birthYear,
+      firstname: user.firstName,
+      lastname: user.lastName,
+      address1: user.address,
+      country: user.country,
+      zipcode: user.zipcode,
+      state: user.state,
+      city: user.city,
+      mobile_number: user.mobile,
+    },
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.include('User created!');
+  });
+});
 
-  cy.get(loginPage.emailInput).should('be.visible').type(parameters.email);
-  cy.get(loginPage.passwordInput).should('be.visible').type(parameters.password);
-
-  cy.get(loginPage.emailInput).should('be.visible').click();
-  cy.wait('@loadPage');
+Cypress.Commands.add('deleteAccount', (user) => {
+  cy.request({
+    method: 'DELETE',
+    url: '/api/deleteAccount',
+    form: true,
+    body: {
+      email: user.email,
+      password: user.password,
+    },
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.include('Account deleted!');
+  });
 });

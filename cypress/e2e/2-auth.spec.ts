@@ -3,7 +3,6 @@
     2.1. Click “Signup / Login”
     2.2. Fill out the registration form
     2.3. Check for the message “ACCOUNT CREATED!”
-    2.4. Delete account
 
     3. User login:
     3.1. Click “Signup / Login”
@@ -18,16 +17,18 @@
 
 import user from '../fixtures/user.json';
 
-const { name, email } = user;
+const { name, email, password } = user;
 
 describe('#2 | Registering a new user', () => {
-  beforeEach(() => {
+  before(() => {
     cy.visit('/');
   });
 
-  it('should be able to register new user', () => {
-    const randomId = Math.floor(Math.random() * 1001);
+  after(() => {
+    cy.deleteAccount({ email, password });
+  });
 
+  it('should register new user', () => {
     cy.get('a[href="/login"]').should('be.visible').click();
 
     // Basic data page
@@ -35,7 +36,7 @@ describe('#2 | Registering a new user', () => {
       .should('be.visible')
       .within(() => {
         cy.get('[data-qa="signup-name"]').should('be.visible').type(name);
-        cy.get('[data-qa="signup-email"]').should('be.visible').type(`${randomId}-${email}`);
+        cy.get('[data-qa="signup-email"]').should('be.visible').type(email);
         cy.get('[data-qa="signup-button"]').should('be.visible').click();
       });
 
@@ -58,12 +59,32 @@ describe('#2 | Registering a new user', () => {
     // Account created confirmation
     cy.get('h2[data-qa="account-created"]').should('be.visible');
     cy.get('a[data-qa="continue-button"]').should('be.visible').click();
+  });
+});
+
+describe('#3 | User login', () => {
+  before(() => {
+    cy.createAccount();
+    cy.visit('/');
+  });
+
+  after(() => {
+    cy.deleteAccount({ email, password });
+  });
+
+  it('should log in the user successfully', () => {
+    cy.get('a[href="/login"]').should('be.visible').click();
+
+    // Login page
+    cy.get('form[action="/login"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('[data-qa="login-email"]').should('be.visible').type(email);
+        cy.get('[data-qa="login-password"]').should('be.visible').type(password);
+        cy.get('[data-qa="login-button"]').should('be.visible').click();
+      });
 
     // Home page
-    cy.get('a[href="/delete_account"]').should('be.visible').click();
-
-    // Account deleted confirmation
-    cy.get('h2[data-qa="account-deleted"]').should('be.visible');
-    cy.get('a[data-qa="continue-button"]').should('be.visible').click();
+    cy.contains(`Logged in as ${name}`).should('be.visible');
   });
 });
