@@ -7,6 +7,7 @@ declare global {
     interface Chainable {
       createAccount(): Chainable<JQuery<HTMLElement>>;
       deleteAccount(user: ILoginAccount): Chainable<JQuery<HTMLElement>>;
+      loginAccount(user: ILoginAccount): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
@@ -50,5 +51,15 @@ Cypress.Commands.add('deleteAccount', (user) => {
   }).then((response) => {
     expect(response.status).to.eq(200);
     expect(response.body).to.include('Account deleted!');
+  });
+});
+
+Cypress.Commands.add('loginAccount', (user) => {
+  cy.visit('/');
+  cy.get('a[href="/login"]').click();
+  cy.get('form[action="/login"]').within(() => {
+    cy.get('[data-qa="login-email"]').type(user.email);
+    cy.get('[data-qa="login-password"]').type(user.password);
+    cy.get('[data-qa="login-button"]').click();
   });
 });

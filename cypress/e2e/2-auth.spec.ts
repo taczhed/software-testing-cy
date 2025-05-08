@@ -88,3 +88,20 @@ describe('#3 | User login', () => {
     cy.contains(`Logged in as ${name}`).should('be.visible');
   });
 });
+
+describe('#4 | User logout', () => {
+  before(() => {
+    cy.createAccount();
+    cy.loginAccount({ email, password });
+    cy.visit('/');
+  });
+
+  after(() => {
+    cy.deleteAccount({ email, password });
+  });
+
+  it('should log out the user successfully', () => {
+    cy.get('a[href="/logout"]').should('be.visible').click();
+    cy.get('a[href="/login"]').should('be.visible').and('contain.text', 'Signup / Login');
+  });
+});
