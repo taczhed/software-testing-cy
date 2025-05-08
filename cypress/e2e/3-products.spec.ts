@@ -15,3 +15,47 @@
     7.2. Search for a product, e.g., “Tshirt”
     7.3. Check if results matching the query appear
 */
+
+describe('#5 | Adding a product to the cart', () => {
+  before(() => {
+    cy.visit('/');
+  });
+
+  it('should add a random product to the cart and verify it', () => {
+    const randomId = Math.floor(Math.random() * 12) + 1;
+
+    // Home page
+    cy.get('a[href="/products"]').should('be.visible').click();
+
+    // Products page
+    cy.get('div.productinfo.text-center')
+      .eq(randomId)
+      .find('p')
+      .invoke('text')
+      .then((text) => {
+        cy.wrap(text.trim()).as('productName');
+      });
+
+    cy.get('div.product-image-wrapper')
+      .eq(randomId)
+      .scrollIntoView()
+      .trigger('mouseover')
+      .within(() => {
+        cy.get('a.add-to-cart').first().should('be.visible').click();
+      });
+
+    cy.get('a[href="/view_cart"]').should('be.visible').contains('View Cart').click();
+
+    // Cart page
+    cy.get('@productName').then((productName) => {
+      cy.get('table#cart_info_table')
+        .find('tr')
+        .not(':first') // Skip header
+        .first()
+        .within(() => {
+          cy.get('td.cart_description a').should('contain.text', productName);
+          cy.get('td.cart_quantity').should('contain.text', '1');
+        });
+    });
+  });
+});
