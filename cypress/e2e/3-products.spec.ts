@@ -17,6 +17,7 @@
 */
 
 const productId = 6;
+const productName = 'Pure Cotton V-Neck T-Shirt';
 
 describe('#5 | Adding a product to the cart', () => {
   before(() => {
@@ -74,5 +75,23 @@ describe('#6 | Removing a product from the cart', () => {
     });
 
     cy.get('span#empty_cart').scrollIntoView().should('be.visible');
+  });
+});
+
+describe('#7 | Searching for a product', () => {
+  before(() => {
+    cy.visit('/');
+  });
+
+  it('should find product if result matching the query', () => {
+    // Home page
+    cy.get('a[href="/products"]').should('be.visible').click();
+
+    // Products page
+    cy.get('input#search_product').should('be.visible').type(productName);
+    cy.get('button#submit_search').should('be.visible').click();
+
+    // Search query page
+    cy.get('div.product-image-wrapper').first().should('be.visible').find('p').contains(productName);
   });
 });
