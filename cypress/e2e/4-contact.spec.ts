@@ -7,8 +7,12 @@
 */
 
 import user from '../fixtures/user.json';
+import { headerSelectors } from '../selectors/header-selectors';
+import { contactSelectors } from '../selectors/contact-selectors';
 
 const { name, email } = user;
+const { contactLink } = headerSelectors;
+const { contactForm, nameInput, emailInput, subjectInput, messageInput, submitButton, successAlert } = contactSelectors;
 
 describe('#8 | Contact via form', () => {
   before(() => {
@@ -17,20 +21,20 @@ describe('#8 | Contact via form', () => {
 
   it('should send a message via contact form and verify success message', () => {
     // Home page
-    cy.get('a[href="/contact_us"]').should('be.visible').click();
+    cy.get(contactLink).should('be.visible').click();
 
     // Contact page
-    cy.get('form#contact-us-form')
+    cy.get(contactForm)
       .should('be.visible')
       .within(() => {
-        cy.get('input[data-qa="name"]').type(name);
-        cy.get('input[data-qa="email"]').type(email);
-        cy.get('input[data-qa="subject"]').type('Test subject');
-        cy.get('textarea[data-qa="message"]').type('Test message');
+        cy.get(nameInput).type(name);
+        cy.get(emailInput).type(email);
+        cy.get(subjectInput).type('Test subject');
+        cy.get(messageInput).type('Test message');
 
-        cy.get('input[data-qa="submit-button"]').click();
+        cy.get(submitButton).click();
       });
 
-    cy.get('div.status.alert-success').should('be.visible').and('contain.text', 'Success!');
+    cy.get(successAlert).should('be.visible').and('contain.text', 'Success!');
   });
 });

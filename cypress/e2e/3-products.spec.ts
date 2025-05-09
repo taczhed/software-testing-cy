@@ -16,6 +16,24 @@
     7.3. Check if results matching the query appear
 */
 
+import { headerSelectors } from '../selectors/header-selectors';
+import { productSelectors } from '../selectors/product-selectors';
+
+const { productsLink, viewCartLink } = headerSelectors;
+const {
+  productInfo,
+  productImageWrapper,
+  addToCartLink,
+  productCartLink,
+  cartTable,
+  tableCellDescription,
+  cartEmptyInfo,
+  tableCellQuantity,
+  tableCellDelete,
+  searchProductInput,
+  searchProductSubmit,
+} = productSelectors;
+
 const productId = 6;
 const productName = 'Pure Cotton V-Neck T-Shirt';
 
@@ -26,10 +44,10 @@ describe('#5 | Adding a product to the cart', () => {
 
   it('should add a random product to the cart and verify it', () => {
     // Home page
-    cy.get('a[href="/products"]').should('be.visible').click();
+    cy.get(productsLink).should('be.visible').click();
 
     // Products page
-    cy.get('div.productinfo.text-center')
+    cy.get(productInfo)
       .eq(productId - 1)
       .find('p')
       .invoke('text')
@@ -37,23 +55,23 @@ describe('#5 | Adding a product to the cart', () => {
         cy.wrap(text.trim()).as('productName');
       });
 
-    cy.get('div.product-image-wrapper')
+    cy.get(productImageWrapper)
       .eq(productId - 1)
       .scrollIntoView()
       .trigger('mouseover')
       .within(() => {
-        cy.get('a.add-to-cart').first().should('be.visible').click();
+        cy.get(addToCartLink).first().should('be.visible').click();
       });
 
-    cy.get('a[href="/view_cart"]').should('be.visible').contains('View Cart').click();
+    cy.get(productCartLink).should('be.visible').contains('View Cart').click();
 
     // Cart page
     cy.get('@productName').then((productName) => {
-      cy.get('table#cart_info_table')
+      cy.get(cartTable)
         .find(`tr#product-${productId}`)
         .within(() => {
-          cy.get('td.cart_description a').should('contain.text', productName);
-          cy.get('td.cart_quantity').should('contain.text', '1');
+          cy.get(tableCellDescription).should('contain.text', productName);
+          cy.get(tableCellQuantity).should('contain.text', '1');
         });
     });
   });
@@ -67,14 +85,14 @@ describe('#6 | Removing a product from the cart', () => {
 
   it('should remove product from the cart and verify it', () => {
     // Home page
-    cy.get('header a[href="/view_cart"]').should('be.visible').click();
+    cy.get(viewCartLink).should('be.visible').click();
 
     // Cart page
     cy.get(`tr#product-${productId}`).within(() => {
-      cy.get('a.cart_quantity_delete').should('be.visible').click();
+      cy.get(tableCellDelete).should('be.visible').click();
     });
 
-    cy.get('span#empty_cart').scrollIntoView().should('be.visible');
+    cy.get(cartEmptyInfo).scrollIntoView().should('be.visible');
   });
 });
 
@@ -85,13 +103,13 @@ describe('#7 | Searching for a product', () => {
 
   it('should find product if result matching the query', () => {
     // Home page
-    cy.get('a[href="/products"]').should('be.visible').click();
+    cy.get(productsLink).should('be.visible').click();
 
     // Products page
-    cy.get('input#search_product').should('be.visible').type(productName);
-    cy.get('button#submit_search').should('be.visible').click();
+    cy.get(searchProductInput).should('be.visible').type(productName);
+    cy.get(searchProductSubmit).should('be.visible').click();
 
     // Search query page
-    cy.get('div.product-image-wrapper').first().should('be.visible').find('p').contains(productName);
+    cy.get(productImageWrapper).first().should('be.visible').find('p').contains(productName);
   });
 });

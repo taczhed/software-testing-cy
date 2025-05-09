@@ -16,8 +16,14 @@
 */
 
 import user from '../fixtures/user.json';
+import { headerSelectors } from '../selectors/header-selectors';
+import { loginSelectors, signupSelectors } from '../selectors/auth-selectors';
 
 const { name, email, password } = user;
+const { loginLink, logoutLink } = headerSelectors;
+const { loginFrom, loginEmailInput, loginPasswordInput, loginButton } = loginSelectors;
+const { signupFrom, signupNameInput, signupEmailInput, signupButton, createAccountButton, accountCreatedInfo, continueButton } =
+  signupSelectors;
 
 describe('#2 | Registering a new user', () => {
   before(() => {
@@ -29,15 +35,15 @@ describe('#2 | Registering a new user', () => {
   });
 
   it('should register new user', () => {
-    cy.get('a[href="/login"]').should('be.visible').click();
+    cy.get(loginLink).should('be.visible').click();
 
     // Basic data page
-    cy.get('form[action="/signup"]')
+    cy.get(signupFrom)
       .should('be.visible')
       .within(() => {
-        cy.get('[data-qa="signup-name"]').should('be.visible').type(name);
-        cy.get('[data-qa="signup-email"]').should('be.visible').type(email);
-        cy.get('[data-qa="signup-button"]').should('be.visible').click();
+        cy.get(signupNameInput).should('be.visible').type(name);
+        cy.get(signupEmailInput).should('be.visible').type(email);
+        cy.get(signupButton).should('be.visible').click();
       });
 
     // Advanced data page
@@ -54,11 +60,11 @@ describe('#2 | Registering a new user', () => {
     cy.get('#city').should('be.visible').type(user.city);
     cy.get('#zipcode').should('be.visible').type(user.zipcode);
     cy.get('#mobile_number').should('be.visible').type(user.mobile);
-    cy.get('button[data-qa="create-account"]').should('be.visible').click();
+    cy.get(createAccountButton).should('be.visible').click();
 
     // Account created confirmation
-    cy.get('h2[data-qa="account-created"]').should('be.visible');
-    cy.get('a[data-qa="continue-button"]').should('be.visible').click();
+    cy.get(accountCreatedInfo).should('be.visible');
+    cy.get(continueButton).should('be.visible').click();
   });
 });
 
@@ -73,15 +79,15 @@ describe('#3 | User login', () => {
   });
 
   it('should log in the user successfully', () => {
-    cy.get('a[href="/login"]').should('be.visible').click();
+    cy.get(loginLink).should('be.visible').click();
 
     // Login page
-    cy.get('form[action="/login"]')
+    cy.get(loginFrom)
       .should('be.visible')
       .within(() => {
-        cy.get('[data-qa="login-email"]').should('be.visible').type(email);
-        cy.get('[data-qa="login-password"]').should('be.visible').type(password);
-        cy.get('[data-qa="login-button"]').should('be.visible').click();
+        cy.get(loginEmailInput).should('be.visible').type(email);
+        cy.get(loginPasswordInput).should('be.visible').type(password);
+        cy.get(loginButton).should('be.visible').click();
       });
 
     // Home page
@@ -101,7 +107,7 @@ describe('#4 | User logout', () => {
   });
 
   it('should log out the user successfully', () => {
-    cy.get('a[href="/logout"]').should('be.visible').click();
-    cy.get('a[href="/login"]').should('be.visible').and('contain.text', 'Signup / Login');
+    cy.get(logoutLink).should('be.visible').click();
+    cy.get(loginLink).should('be.visible').and('contain.text', 'Signup / Login');
   });
 });
