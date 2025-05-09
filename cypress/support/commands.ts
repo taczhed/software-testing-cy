@@ -8,6 +8,7 @@ declare global {
       createAccount(): Chainable<JQuery<HTMLElement>>;
       deleteAccount(user: ILoginAccount): Chainable<JQuery<HTMLElement>>;
       loginAccount(user: ILoginAccount): Chainable<JQuery<HTMLElement>>;
+      addProductToCart(productId: number): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
@@ -62,4 +63,16 @@ Cypress.Commands.add('loginAccount', (user) => {
     cy.get('[data-qa="login-password"]').type(user.password);
     cy.get('[data-qa="login-button"]').click();
   });
+});
+
+Cypress.Commands.add('addProductToCart', (productId: number) => {
+  cy.visit('/');
+  cy.get('a[href="/products"]').should('be.visible').click();
+  cy.get('div.product-image-wrapper')
+    .eq(productId - 1)
+    .scrollIntoView()
+    .trigger('mouseover')
+    .within(() => {
+      cy.get('a.add-to-cart').first().should('be.visible').click();
+    });
 });
